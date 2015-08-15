@@ -4,7 +4,7 @@ All kinds of configurations I use for Nginx, Apache, Puppet, Ansible, or anythin
 
 ## Nginx
 
-I migrated my own webserver from Apache to Nginx, and had to get it working again with PHP-FPM (for Wordpress), NodeJS (for Ghost) and Ruby on Rails/Rack with SSL on a seperate port (for Puppet Master). 
+I migrated my own webserver from Apache to Nginx, and had to get it working again with PHP-FPM (for Wordpress), NodeJS (for Ghost) and Ruby on Rails/Rack with SSL on a separate port (for Puppet Master). 
 
 ## Ansible and Puppet
 
