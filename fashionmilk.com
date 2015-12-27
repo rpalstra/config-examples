@@ -1,7 +1,7 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name  fashionmilk.com www.fashionmilk.com www2.fashionmilk.com nieuw.fashionmilk.com fashionmilk.nl www.fashionmilk.nl fashion-milk.nl www.fashion-milk.nl fashion-milk.com www.fashion-milk.com fashionmilk.palstra.com;
+    server_name  www.fashionmilk.com fashionmilk.com www2.fashionmilk.com nieuw.fashionmilk.com fashionmilk.nl www.fashionmilk.nl fashion-milk.nl www.fashion-milk.nl fashion-milk.com www.fashion-milk.com fashionmilk.palstra.com;
     root   /www/fashionmilk.com/site;
     index  index.php;
     set $cache_uri $request_uri;
@@ -9,6 +9,7 @@ server {
     # POST requests and urls with a query string should always go to PHP
     if ($request_method = POST) {
       set $cache_uri 'null cache';
+#      add_header 'Access-Control-Allow-Origin' '*';
     }
     if ($query_string != "") {
       set $cache_uri 'null cache';

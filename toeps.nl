@@ -1,7 +1,7 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name  toeps.nl www.toeps.nl toeps.palstra.com;
+    server_name  www.toeps.nl toeps.nl toeps.palstra.com;
     root   /www/toeps.nl/site;
     index  index.php index.html;
     set $cache_uri $request_uri;
