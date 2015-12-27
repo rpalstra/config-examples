@@ -29,7 +29,7 @@ server {
     location / {
     index  index.php index.html index.htm;
       if (!-e $request_filename) {
-        rewrite ^/(.*)/$ http://toeps.palstra.com/fotografie/ last;
+        rewrite ^/(.*)/$ http://www.toeps.nl/fotografie/ last;
       }
     }
 
