@@ -85,7 +85,7 @@ server {
         fastcgi_cache_use_stale updating;
         fastcgi_cache_bypass $http_pragma;
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass    127.0.0.1:9000;
+        fastcgi_pass    127.0.0.1:9003;
         fastcgi_index   index.php;
         fastcgi_param   SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         include         fastcgi_params;
@@ -115,7 +115,7 @@ server {
         fastcgi_cache_use_stale updating;
         fastcgi_cache_bypass $http_pragma;
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass    127.0.0.1:9000;
+        fastcgi_pass    127.0.0.1:9003;
         fastcgi_index   index.php;
         fastcgi_param   SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         include         fastcgi_params;
@@ -149,7 +149,7 @@ server {
 	root 	       	/www/toeps.nl/site;
 	try_files $uri 	$uri/ /index.php?$args;
 	fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass   	127.0.0.1:9000;
+        fastcgi_pass   	127.0.0.1:9003;
         fastcgi_index  	index.php;
 	fastcgi_param  	SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         include        	fastcgi_params;
