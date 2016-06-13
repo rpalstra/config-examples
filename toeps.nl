@@ -29,7 +29,7 @@ server {
     location / {
     index  index.php index.html index.htm;
       if (!-e $request_filename) {
-        rewrite ^/(.*)/$ http://www.toeps.nl/fotografie/ last;
+        rewrite ^/(.*)/$ http://www.toeps.nl/portfolio/ last;
       }
     }
 
@@ -66,35 +66,10 @@ server {
     }
 
 
-    location @fotografie {
-    rewrite ^/fotografie(.*) /fotografie/index.php?q=$1;
+    location /fotografie {
+    rewrite ^ $scheme://www.toeps.nl/portfolio permanent;
     }
     
-    location /fotografie {
-        alias /www/toeps.nl/site/fotografie;
-        index index.php index.html index.htm;
-        try_files $uri $uri/ @fotografie;
-
-        location ~ \.php$ {
-        set $skip_cache 1;
-        if ($cache_uri != "null cache") {
-          add_header X-Cache-Debug "$cache_uri $cookie_nocache $arg_nocache$arg_comment $http_pragma $http_authorization";
-          set $skip_cache 0;
-        }
-        fastcgi_cache_bypass $skip_cache;
-        fastcgi_cache microcache;
-        fastcgi_cache_key $scheme$host$request_uri$request_method;
-        fastcgi_cache_valid any 8m;
-        fastcgi_cache_use_stale updating;
-        fastcgi_cache_bypass $http_pragma;
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass    127.0.0.1:9003;
-        fastcgi_index   index.php;
-        fastcgi_param   SCRIPT_FILENAME  $document_root$fastcgi_script_name;
-        include         fastcgi_params;
-	}    
-    }
-
     location /portfolio {
         alias /www/toeps.nl/site/portfolio;
         index index.php index.html index.htm;
