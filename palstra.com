@@ -1,10 +1,38 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name  www.palstra.com palstra.com www.palstra.nl palstra.nl www.palstra.net palstra.net www.palstra.org palstra.org www.riemerpalstra.com riemerpalstra.com www.riemerpalstra.nl riemerpalstra.nl riemer.palstra.com www.palstra.frl palstra.frl;
+    server_name  www.palstra.com palstra.com www.palstra.nl palstra.nl www.palstra.net palstra.net www.palstra.org palstra.org www.riemerpalstra.com riemerpalstra.com www.riemerpalstra.nl riemerpalstra.nl riemer.palstra.com;
+    rewrite ^ https://$server_name$request_uri? permanent;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name  www.palstra.com palstra.com www.palstra.nl palstra.nl www.palstra.net palstra.net www.palstra.org palstra.org www.riemerpalstra.com riemerpalstra.com www.riemerpalstra.nl riemerpalstra.nl riemer.palstra.com; 
     root   /www/palstra.com/site;
     index  index.php;
     set $cache_uri $request_uri;
+    ssl_certificate      /etc/letsencrypt/live/palstra.com/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/palstra.com/privkey.pem;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA';
+    ssl_prefer_server_ciphers on;
+    ssl_dhparam /etc/nginx/conf.d/dhparams.pem;
+    keepalive_timeout    70;
+    ssl_session_timeout  10m;
+
+    client_max_body_size 200M;
+    etag on;
+    expires 7d;
+    if_modified_since before;
+
+    gzip on;
+    gzip_vary on;
+    gzip_comp_level 6;
+    gzip_types text/plain text/xml image/svg+xml # text/html in core already.
+      application/rss+xml application/atom+xml application/xhtml+xml
+      text/css application/json application/x-javascript
+      application/font-otf application/font-ttf;
 
     # POST requests and urls with a query string should always go to PHP
     if ($request_method = POST) {
@@ -40,7 +68,15 @@ server {
     location / {
         try_files $uri $uri/ /index.php?$args;
     }
+
+    location /images/gallery/ {
+        autoindex on;
+    }
  
+    location /demon/ {
+        autoindex on;
+    }
+
     error_page  404              /404.html;
     location = /404.html {
         root   /usr/share/nginx/www;
@@ -50,6 +86,24 @@ server {
     location = /50x.html {
         root   /usr/share/nginx/html;
     }
+
+    # Do not allow public access to private cache directory.
+    if ($uri ~* /wp\-content/cache/comet\-cache/cache(?:/|$)) {
+      return 403;
+    }
+ 
+    # Do not allow public access to private cache directory.
+    if ($uri ~* /wp\-content/cache/comet\-cache/htmlc/private(?:/|$)) {
+      return 403;
+    }
+
+    # ↓ See: http://davidwalsh.name/cdn-fonts
+    # This prevents cross-domain security issues related to fonts.
+    # Only needed if you use Static CDN Filters in Comet Cache.
+    #
+    # location ~* \.(?:ttf|ttc|otf|eot|woff|woff2|css|js)$ {
+    #  add_header Access-Control-Allow-Origin *;
+    # }
 
     location ~ \.php$ {
 	set $skip_cache 1;
