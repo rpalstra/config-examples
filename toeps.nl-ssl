@@ -156,7 +156,7 @@ server {
     location /charlotte {
         alias /www/toeps.nl/site/charlotte;
         index index.php index.html index.htm;
-        try_files $uri $uri/ @test;
+        try_files $uri $uri/ @charlotte§;
 
         location ~ \.php$ {
         fastcgi_cache_bypass 1;
