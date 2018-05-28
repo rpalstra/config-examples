@@ -1,14 +1,14 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name  www.toeps.nl toeps.nl www.toepsmedia.nl toepsmedia.nl blog.toeps.nl;
+    server_name  www.toeps.nl toeps.nl blog.toeps.nl;
     rewrite ^ https://$server_name$request_uri? permanent;
 }
 
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
-    server_name  www.toeps.nl toeps.nl www.toepsmedia.nl toepsmedia.nl blog.toeps.nl;
+    server_name  www.toeps.nl toeps.nl blog.toeps.nl;
     root   /www/toeps.nl/site;
     index  index.php index.html;
     set $cache_uri $request_uri;

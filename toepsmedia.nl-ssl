@@ -1,19 +1,20 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name  www.palstra.com palstra.com www.palstra.nl palstra.nl www.palstra.net palstra.net www.palstra.org palstra.org www.riemerpalstra.com riemerpalstra.com www.riemerpalstra.nl riemerpalstra.nl riemer.palstra.com;
+    server_name  www.toepsmedia.nl toepsmedia.nl;
     rewrite ^ https://$server_name$request_uri? permanent;
 }
 
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
-    server_name  www.palstra.com palstra.com www.palstra.nl palstra.nl www.palstra.net palstra.net www.palstra.org palstra.org www.riemerpalstra.com riemerpalstra.com www.riemerpalstra.nl riemerpalstra.nl riemer.palstra.com; 
-    root   /www/palstra.com/site;
-    index  index.php;
+    server_name www.toepsmedia.nl toepsmedia.nl;
+    root   /www/toepsmedia.nl/site;
+    index  index.php index.html;
     set $cache_uri $request_uri;
-    ssl_certificate      /etc/letsencrypt/live/palstra.com/fullchain.pem;
-    ssl_certificate_key  /etc/letsencrypt/live/palstra.com/privkey.pem;
+    set $cache_uri $request_uri;
+    ssl_certificate      /etc/letsencrypt/live/toeps.nl/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/toeps.nl/privkey.pem;
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA';
     ssl_prefer_server_ciphers on;
@@ -52,58 +53,18 @@ server {
       set $cache_uri 'null cache';
     }
 
-    access_log  /var/log/nginx/palstra.com.access.log;
+    access_log  /var/log/nginx/toepsmedia.nl.access.log;
 
-    location = /favicon.ico {
-        log_not_found off;
-        access_log off;
-    }
- 
-    location = /robots.txt {
-        allow all;
-        log_not_found off;
-        access_log off;
-    }
- 
+#    location / {
+#    index  index.php index.html index.htm;
+#    }
+
     location / {
         try_files $uri $uri/ /index.php?$args;
     }
 
-    location /images/gallery/ {
-        autoindex on;
-    }
- 
-    location /demon/ {
-        autoindex on;
-    }
-
-    error_page  404              /404.html;
-    location = /404.html {
-        root   /usr/share/nginx/www;
-    }
-
-    error_page   500 502 503 504  /50x.html;
-    location = /50x.html {
-        root   /usr/share/nginx/html;
-    }
-
-    # Do not allow public access to private cache directory.
-    if ($uri ~* /wp\-content/cache/comet\-cache/cache(?:/|$)) {
-      return 403;
-    }
- 
-    # Do not allow public access to private cache directory.
-    if ($uri ~* /wp\-content/cache/comet\-cache/htmlc/private(?:/|$)) {
-      return 403;
-    }
-
-    # ↓ See: http://davidwalsh.name/cdn-fonts
-    # This prevents cross-domain security issues related to fonts.
-    # Only needed if you use Static CDN Filters in Comet Cache.
-    #
-    # location ~* \.(?:ttf|ttc|otf|eot|woff|woff2|css|js)$ {
-    #  add_header Access-Control-Allow-Origin *;
-    # }
+#    error_page  404              /blog/404/;
+#    error_page  500 502 503 504  /blog/50x/;
 
     location ~ \.php$ {
 	set $skip_cache 1;
@@ -118,10 +79,10 @@ server {
     	fastcgi_cache_use_stale updating;
     	fastcgi_cache_bypass $http_pragma;
 
-	root 	       	/www/palstra.com/site;
+	root 	       	/www/toepsmedia.nl/site;
 	try_files $uri 	$uri/ /index.php?$args;
 	fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass   	127.0.0.1:9001;
+        fastcgi_pass   	127.0.0.1:9004;
         fastcgi_index  	index.php;
 	fastcgi_buffers 16 16k; 
 	fastcgi_buffer_size 32k;
