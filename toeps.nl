@@ -1,10 +1,39 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name  www.toeps.nl toeps.nl toeps.palstra.com;
+    server_name  www.toeps.nl toeps.nl blog.toeps.nl;
+    rewrite ^ https://$server_name$request_uri? permanent;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name  www.toeps.nl toeps.nl blog.toeps.nl;
     root   /www/toeps.nl/site;
     index  index.php index.html;
     set $cache_uri $request_uri;
+    set $cache_uri $request_uri;
+    ssl_certificate      /etc/letsencrypt/live/toeps.nl/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/toeps.nl/privkey.pem;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA';
+    ssl_prefer_server_ciphers on;
+    ssl_dhparam /etc/nginx/conf.d/dhparams.pem;
+    keepalive_timeout    70;
+    ssl_session_timeout  10m;
+
+    client_max_body_size 200M;
+    etag on;
+    expires 7d;
+    if_modified_since before;
+
+    gzip on;
+    gzip_vary on;
+    gzip_comp_level 6;
+    gzip_types text/plain text/xml image/svg+xml # text/html in core already.
+      application/rss+xml application/atom+xml application/xhtml+xml
+      text/css application/json application/x-javascript
+      application/font-otf application/font-ttf;
 
     # POST requests and urls with a query string should always go to PHP
     if ($request_method = POST) {
@@ -29,7 +58,7 @@ server {
     location / {
     index  index.php index.html index.htm;
       if (!-e $request_filename) {
-        rewrite ^/(.*)/$ http://www.toeps.nl/portfolio/ last;
+        rewrite ^/(.*)/$ http://www.toeps.nl/toepsfolio/ last;
       }
     }
 
@@ -67,13 +96,21 @@ server {
 
 
     location /fotografie {
-    rewrite ^ $scheme://www.toeps.nl/portfolio permanent;
+    rewrite ^ $scheme://www.toeps.nl/toepsfolio permanent;
     }
     
     location /portfolio {
-        alias /www/toeps.nl/site/portfolio;
+    rewrite ^ $scheme://www.toeps.nl/toepsfolio permanent;
+    }
+
+    location @toepsfolio {
+    rewrite ^/toepsfolio(.*) /toepsfolio/index.php?q=$1;
+    }
+    
+    location /toepsfolio {
+        alias /www/toeps.nl/site/toepsfolio;
         index index.php index.html index.htm;
-        try_files $uri $uri/ @portfolio;
+        try_files $uri $uri/ @toepsfolio;
 
         location ~ \.php$ {
         fastcgi_cache_bypass 1;
@@ -88,7 +125,53 @@ server {
         include         fastcgi_params;
 	}    
     }
-    
+   
+    location @test {
+    rewrite ^/test(.*) /test/index.php?q=$1;
+    }
+
+    location /test {
+        alias /www/toeps.nl/site/test;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ @test;
+
+        location ~ \.php$ {
+        fastcgi_cache_bypass 1;
+        fastcgi_no_cache 1;
+        fastcgi_cache_use_stale updating;
+        fastcgi_pass    127.0.0.1:9003;
+        fastcgi_index   index.php;
+	fastcgi_buffers 16 16k; 
+	fastcgi_buffer_size 32k;
+	fastcgi_read_timeout 300;
+        fastcgi_param   SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include         fastcgi_params;
+	}    
+    }
+
+    location @charlotte {
+    rewrite ^/charlotte(.*) /charlotte/index.php?q=$1;
+    }
+
+    location /charlotte {
+        alias /www/toeps.nl/site/charlotte;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ @charlotte;
+
+        location ~ \.php$ {
+        fastcgi_cache_bypass 1;
+        fastcgi_no_cache 1;
+        fastcgi_cache_use_stale updating;
+        fastcgi_pass    127.0.0.1:9003;
+        fastcgi_index   index.php;
+	fastcgi_buffers 16 16k; 
+	fastcgi_buffer_size 32k;
+	fastcgi_read_timeout 300;
+        fastcgi_param   SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include         fastcgi_params;
+	}    
+    }
+
     location @handmodel {
     rewrite ^/handmodel(.*) /handmodel/index.php?q=$1;
     }
@@ -122,15 +205,8 @@ server {
     }
 
     
-    error_page  404              /404.html;
-    location = /404.html {
-        root   /usr/share/nginx/www;
-    }
-
-    error_page   500 502 503 504  /50x.html;
-    location = /50x.html {
-        root   /usr/share/nginx/html;
-    }
+#    error_page  404              /blog/404/;
+#    error_page  500 502 503 504  /blog/50x/;
 
     location ~ \.php$ {
 	set $skip_cache 1;
