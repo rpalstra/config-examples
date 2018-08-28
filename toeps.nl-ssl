@@ -62,7 +62,7 @@ server {
     }
 
     location @blog {
-    rewrite ^/blog(.*) /blog/index.php?q=$1;
+    rewrite ^/blog(.*) /blog/index.php?$args;
     }
 
     location /blog {
@@ -103,7 +103,7 @@ server {
     }
 
     location @toepsfolio {
-    rewrite ^/toepsfolio(.*) /toepsfolio/index.php?q=$1;
+    rewrite ^/toepsfolio(.*) /toepsfolio/index.php?$args;
     }
     
     location /toepsfolio {
@@ -128,7 +128,7 @@ server {
     }
    
     location @test {
-    rewrite ^/test(.*) /test/index.php?q=$1;
+    rewrite ^/test(.*) /test/index.php?$args;
     }
 
     location /test {
@@ -154,7 +154,7 @@ server {
     }
 
     location @ink {
-    rewrite ^/ink(.*) /ink/index.php?q=$1;
+    rewrite ^/ink(.*) /ink/index.php?$args;
     }
 
     location /ink {
@@ -179,8 +179,34 @@ server {
 	}
     }
 
+    location @tiffany {
+    rewrite ^/tiffany(.*) /tiffany/index.php?$args;
+    }
+
+    location /tiffany {
+        alias /www/toeps.nl/site/tiffany;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ @tiffany;
+#        expires -1;
+
+        location ~ \.php$ {
+        set $skip_cache 1;
+        set $cache_uri 'null cache';
+        fastcgi_cache_bypass 1;
+        fastcgi_no_cache 1;
+        fastcgi_cache_use_stale off;
+        fastcgi_pass    127.0.0.1:9003;
+        fastcgi_index   index.php;
+	fastcgi_buffers 16 16k; 
+	fastcgi_buffer_size 32k;
+	fastcgi_read_timeout 300;
+        fastcgi_param   SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include         fastcgi_params;
+	}
+    }
+
     location @charlotte {
-    rewrite ^/charlotte(.*) /charlotte/index.php?q=$1;
+    rewrite ^/charlotte(.*) /charlotte/index.php?$args;
     }
 
     location /charlotte {
@@ -206,7 +232,7 @@ server {
     }
 
     location @handmodel {
-    rewrite ^/handmodel(.*) /handmodel/index.php?q=$1;
+    rewrite ^/handmodel(.*) /handmodel/index.php?$args;
     }
     
     location /handmodel {
