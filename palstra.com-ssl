@@ -6,8 +6,8 @@ server {
 }
 
 server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
+    listen 443 http2 ssl;
+    listen [::]:443 http2 ssl;
     server_name  www.palstra.com palstra.com www.palstra.nl palstra.nl www.palstra.net palstra.net www.palstra.org palstra.org www.riemerpalstra.com riemerpalstra.com www.riemerpalstra.nl riemerpalstra.nl riemer.palstra.com; 
     root   /www/palstra.com/site;
     index  index.php;
@@ -23,7 +23,7 @@ server {
 
     client_max_body_size 200M;
     etag on;
-    expires 7d;
+#    expires 7d;
     if_modified_since before;
 
     gzip on;
@@ -117,6 +117,8 @@ server {
     	fastcgi_cache_valid any 8m;
     	fastcgi_cache_use_stale updating;
     	fastcgi_cache_bypass $http_pragma;
+        fastcgi_ignore_headers Expires Cache-Control;
+        fastcgi_hide_header Pragma;
 
 	root 	       	/www/palstra.com/site;
 	try_files $uri 	$uri/ /index.php?$args;

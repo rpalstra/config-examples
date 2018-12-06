@@ -6,13 +6,12 @@ server {
 }
 
 server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
+    listen 443 http2 ssl;
+    listen [::]:443 http2 ssl;
     server_name www.toepsmedia.nl toepsmedia.nl;
     root   /www/toepsmedia.nl/site;
     index  index.php index.html;
-    set $cache_uri $request_uri;
-    set $cache_uri $request_uri;
+    set $skip_cache 0;
     ssl_certificate      /etc/letsencrypt/live/toeps.nl/fullchain.pem;
     ssl_certificate_key  /etc/letsencrypt/live/toeps.nl/privkey.pem;
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
@@ -24,7 +23,7 @@ server {
 
     client_max_body_size 200M;
     etag on;
-    expires 7d;
+#    expires 7d;
     if_modified_since before;
 
     gzip on;
@@ -37,20 +36,20 @@ server {
 
     # POST requests and urls with a query string should always go to PHP
     if ($request_method = POST) {
-      set $cache_uri 'null cache';
+      set $skip_cache 1;
     }
     if ($query_string != "") {
-      set $cache_uri 'null cache';
+      set $skip_cache 1;
     }
 
     # Don't cache uris containing the following segments
     if ($request_uri ~* "(/wp-admin/|/xmlrpc.php|/wp-(app|cron|login|register|mail).php|wp-.*.php|/feed/|index.php|wp-comments-popup.php|wp-links-opml.php|wp-locations.php|sitemap(_index)?.xml|[a-z0-9_-]+-sitemap([0-9]+)?.xml)") {
-      set $cache_uri 'null cache';
+      set $skip_cache 1;
     }
 
     # Don't use the cache for logged in users or recent commenters
     if ($http_cookie ~* "comment_author|wordpress_[a-f0-9]+|wp-postpass|wordpress_logged_in") {
-      set $cache_uri 'null cache';
+      set $skip_cache 1;
     }
 
     access_log  /var/log/nginx/toepsmedia.nl.access.log;
@@ -67,17 +66,12 @@ server {
 #    error_page  500 502 503 504  /blog/50x/;
 
     location ~ \.php$ {
-	set $skip_cache 1;
-    	if ($cache_uri != "null cache") {
-     	  add_header X-Cache-Debug "$cache_uri $cookie_nocache $arg_nocache$arg_comment $http_pragma $http_authorization";
-      	  set $skip_cache 0;
-    	}
     	fastcgi_cache_bypass $skip_cache;
+    	fastcgi_no_cache $skip_cache;
     	fastcgi_cache microcache;
     	fastcgi_cache_key $scheme$host$request_uri$request_method;
     	fastcgi_cache_valid any 8m;
-    	fastcgi_cache_use_stale updating;
-    	fastcgi_cache_bypass $http_pragma;
+    	fastcgi_cache_use_stale updating error timeout invalid_header http_500;
 
 	root 	       	/www/toepsmedia.nl/site;
 	try_files $uri 	$uri/ /index.php?$args;
