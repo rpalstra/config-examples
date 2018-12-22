@@ -1,14 +1,14 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name  www.palstra.com palstra.com www.palstra.nl palstra.nl www.palstra.net palstra.net www.palstra.org palstra.org www.riemerpalstra.com riemerpalstra.com www.riemerpalstra.nl riemerpalstra.nl riemer.palstra.com;
+    server_name  palstra.com www.palstra.com www.palstra.nl palstra.nl www.palstra.net palstra.net www.palstra.org palstra.org www.riemerpalstra.com riemerpalstra.com www.riemerpalstra.nl riemerpalstra.nl riemer.palstra.com;
     rewrite ^ https://$server_name$request_uri? permanent;
 }
 
 server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
-    server_name  www.palstra.com palstra.com www.palstra.nl palstra.nl www.palstra.net palstra.net www.palstra.org palstra.org www.riemerpalstra.com riemerpalstra.com www.riemerpalstra.nl riemerpalstra.nl riemer.palstra.com; 
+    listen 443 http2 ssl;
+    listen [::]:443 http2 ssl;
+    server_name  palstra.com www.palstra.com www.palstra.nl palstra.nl www.palstra.net palstra.net www.palstra.org palstra.org www.riemerpalstra.com riemerpalstra.com www.riemerpalstra.nl riemerpalstra.nl riemer.palstra.com; 
     root   /www/palstra.com/site;
     index  index.php;
     set $cache_uri $request_uri;
