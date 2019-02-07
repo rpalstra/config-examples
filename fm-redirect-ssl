@@ -1,7 +1,7 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name  www.fashionmilk.com fashionmilk.com;
+    server_name  www.fashionmilk.com fashionmilk.com oud.fashionmilk.com;
 
     location / {
       rewrite ^ $scheme://www.toeps.nl/blog$request_uri? permanent;
@@ -10,8 +10,8 @@ server {
 }
 
 server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
+    listen 443 http2 ssl;
+    listen [::]:443 http2 ssl;
     server_name  www.fashionmilk.com fashionmilk.com;
     ssl_certificate      /etc/letsencrypt/live/fashionmilk.com/fullchain.pem;
     ssl_certificate_key  /etc/letsencrypt/live/fashionmilk.com/privkey.pem;
