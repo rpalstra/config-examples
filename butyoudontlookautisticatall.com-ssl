@@ -1,15 +1,15 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name  www.toepsmedia.nl toepsmedia.nl;
+    server_name  www.butyoudontlookautisticatall.com butyoudontlookautisticatall.com;
     rewrite ^ https://$server_name$request_uri? permanent;
 }
 
 server {
     listen 443 http2 ssl;
     listen [::]:443 http2 ssl;
-    server_name www.toepsmedia.nl toepsmedia.nl;
-    root   /www/toepsmedia.nl/site;
+    server_name www.butyoudontlookautisticatall.com butyoudontlookautisticatall.com;
+    root   /www/butyoudontlookautisticatall.com/site;
     index  index.php index.html;
     set $skip_cache 0;
     ssl_certificate      /etc/letsencrypt/live/toeps.nl/fullchain.pem;
@@ -53,7 +53,7 @@ server {
       set $skip_cache 1;
     }
 
-    access_log  /var/log/nginx/toepsmedia.nl.access.log;
+    access_log  /var/log/nginx/butyoudontlookautisticatall.com.access.log;
 
 #    location / {
 #    index  index.php index.html index.htm;
@@ -74,7 +74,7 @@ server {
     	fastcgi_cache_valid any 8m;
     	fastcgi_cache_use_stale updating error timeout invalid_header http_500;
 
-	root 	       	/www/toepsmedia.nl/site;
+	root 	       	/www/butyoudontlookautisticatall.com/site;
 	try_files $uri 	$uri/ /index.php?$args;
 	fastcgi_split_path_info ^(.+\.php)(/.+)$;
         fastcgi_pass   	127.0.0.1:9004;
