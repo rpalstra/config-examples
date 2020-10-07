@@ -55,6 +55,10 @@ server {
 
     access_log  /var/log/nginx/toeps.nl.access.log;
 
+    location /links {
+    rewrite ^/links https://www.toeps.nl/blog/linkinbio;
+    }
+  
     location / {
     index  index.php index.html index.htm;
       if (!-e $request_filename) {
