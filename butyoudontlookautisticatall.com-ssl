@@ -30,9 +30,9 @@ server {
     gzip on;
     gzip_vary on;
     gzip_comp_level 6;
-    gzip_types text/plain text/xml image/svg+xml # text/html in core already.
+    gzip_types text/plain text/css text/javascript text/xml image/svg+xml
       application/rss+xml application/atom+xml application/xhtml+xml
-      text/css application/json application/x-javascript
+      application/json application/x-javascript
       application/font-otf application/font-ttf;
 
     # POST requests and urls with a query string should always go to PHP
