@@ -30,10 +30,10 @@ server {
     gzip on;
     gzip_vary on;
     gzip_comp_level 6;
-    gzip_types text/plain text/xml text/css text/javascript image/svg+xml
+    gzip_types text/plain text/xml text/css text/js text/javascript
       application/rss+xml application/atom+xml application/xhtml+xml
-      application/json application/x-javascript
-      application/font-otf application/font-ttf;
+      application/json application/x-javascript application/javascript
+      application/font-otf application/font-ttf image/svg+xml;
 
     # POST requests and urls with a query string should always go to PHP
     if ($request_method = POST) {
