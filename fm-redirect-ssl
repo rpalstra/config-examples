@@ -4,7 +4,7 @@ server {
     server_name  www.fashionmilk.com fashionmilk.com oud.fashionmilk.com;
 
     location / {
-      rewrite ^ $scheme://www.toeps.nl/blog$request_uri? permanent;
+      rewrite ^ $scheme://www.toeps.nl/$request_uri? permanent;
     }
 
 }
@@ -23,7 +23,7 @@ server {
     ssl_session_timeout  10m;
 
     location / {
-      rewrite ^ $scheme://www.toeps.nl/blog$request_uri? permanent;
+      rewrite ^ $scheme://www.toeps.nl/$request_uri? permanent;
     }
 
 }
