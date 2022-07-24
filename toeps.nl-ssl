@@ -1,7 +1,7 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name  www.toeps.nl toeps.nl blog.toeps.nl;
+    server_name  www.toeps.nl toeps.nl blog.toeps.nl fashionmilk.com www.fashionmilk.com;
     rewrite ^ https://$server_name$request_uri? permanent;
 }
 
@@ -55,57 +55,9 @@ server {
 
     access_log  /var/log/nginx/toeps.nl.access.log;
 
-    location /links {
-    rewrite ^/links https://www.toeps.nl/blog/linkinbio;
-    }
-  
     location / {
     index  index.php index.html index.htm;
-      if (!-e $request_filename) {
-        rewrite ^/(.*)/$ http://www.toeps.nl/toepsfolio/ last;
-      }
-    }
-
-    location @blog {
-    rewrite ^/blog(.*) /blog/index.php?$args;
-    }
-
-    location /blog {
-        alias /www/toeps.nl/site/blog;
-        index index.php index.html index.htm;
-        try_files $uri $uri/ @blog;
-
-        location ~ \.php$ {
-        set $skip_cache 1;
-        if ($cache_uri != "null cache") {
-          add_header X-Cache-Debug "$cache_uri $cookie_nocache $arg_nocache$arg_comment $http_pragma $http_authorization";
-          add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-          set $skip_cache 0;
-        }
-        fastcgi_cache_bypass $skip_cache;
-        fastcgi_cache microcache;
-        fastcgi_cache_key $scheme$host$request_uri$request_method;
-        fastcgi_cache_valid any 8m;
-        fastcgi_cache_use_stale updating;
-        fastcgi_cache_bypass $http_pragma;
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass    127.0.0.1:9003;
-        fastcgi_index   index.php;
-	fastcgi_buffers 16 16k; 
-	fastcgi_buffer_size 32k;
-	fastcgi_read_timeout 300;
-        fastcgi_param   SCRIPT_FILENAME  $request_filename;
-        include         fastcgi_params;
-        }
-    }
-
-
-    location /fotografie {
-    rewrite ^ $scheme://www.toeps.nl/toepsfolio permanent;
-    }
-    
-    location /portfolio {
-    rewrite ^ $scheme://www.toeps.nl/toepsfolio permanent;
+    try_files $uri 	$uri/ /index.php?$args;
     }
 
     location @toepsfolio {
@@ -133,58 +85,6 @@ server {
 	}    
     }
    
-    location @test {
-    rewrite ^/test(.*) /test/index.php?$args;
-    }
-
-    location /test {
-        alias /www/toeps.nl/site/test;
-        index index.php index.html index.htm;
-        try_files $uri $uri/ @test;
-#        expires -1;
-
-        location ~ \.php$ {
-        set $skip_cache 1;
-        set $cache_uri 'null cache';
-        fastcgi_cache_bypass 1;
-        fastcgi_no_cache 1;
-        fastcgi_cache_use_stale off;
-        fastcgi_pass    127.0.0.1:9003;
-        fastcgi_index   index.php;
-	fastcgi_buffers 16 16k; 
-	fastcgi_buffer_size 32k;
-	fastcgi_read_timeout 300;
-        fastcgi_param   SCRIPT_FILENAME  $request_filename;
-        include         fastcgi_params;
-	}    
-    }
-
-    location @ink {
-    rewrite ^/ink(.*) /ink/index.php?$args;
-    }
-
-    location /ink {
-        alias /www/toeps.nl/site/ink;
-        index index.php index.html index.htm;
-        try_files $uri $uri/ @ink;
-#        expires -1;
-
-        location ~ \.php$ {
-        set $skip_cache 1;
-        set $cache_uri 'null cache';
-        fastcgi_cache_bypass 1;
-        fastcgi_no_cache 1;
-        fastcgi_cache_use_stale off;
-        fastcgi_pass    127.0.0.1:9003;
-        fastcgi_index   index.php;
-	fastcgi_buffers 16 16k; 
-	fastcgi_buffer_size 32k;
-	fastcgi_read_timeout 300;
-        fastcgi_param   SCRIPT_FILENAME $request_filename;
-        include         fastcgi_params;
-	}
-    }
-
     location @shop {
     rewrite ^/shop(.*) /shop/index.php?$args;
     }
@@ -211,92 +111,6 @@ server {
 	}
     }
 
-    location @tiffany {
-    rewrite ^/tiffany(.*) /tiffany/index.php?$args;
-    }
-
-    location /tiffany {
-        alias /www/toeps.nl/site/tiffany;
-        index index.php index.html index.htm;
-        try_files $uri $uri/ @tiffany;
-#        expires -1;
-
-        location ~ \.php$ {
-        set $skip_cache 1;
-        set $cache_uri 'null cache';
-        fastcgi_cache_bypass 1;
-        fastcgi_no_cache 1;
-        fastcgi_cache_use_stale off;
-        fastcgi_pass    127.0.0.1:9003;
-        fastcgi_index   index.php;
-	fastcgi_buffers 16 16k; 
-	fastcgi_buffer_size 32k;
-	fastcgi_read_timeout 300;
-        fastcgi_param   SCRIPT_FILENAME  $request_filename;
-        include         fastcgi_params;
-	}
-    }
-
-    location @charlotte {
-    rewrite ^/charlotte(.*) /charlotte/index.php?$args;
-    }
-
-    location /charlotte {
-        alias /www/toeps.nl/site/charlotte;
-        index index.php index.html index.htm;
-        try_files $uri $uri/ @charlotte;
-#        expires -1;
-
-        location ~ \.php$ {
-        set $skip_cache 1;
-        set $cache_uri 'null cache';
-        fastcgi_cache_bypass 1;
-        fastcgi_no_cache 1;
-        fastcgi_cache_use_stale off;
-        fastcgi_pass    127.0.0.1:9003;
-        fastcgi_index   index.php;
-	fastcgi_buffers 16 16k; 
-	fastcgi_buffer_size 32k;
-	fastcgi_read_timeout 300;
-        fastcgi_param   SCRIPT_FILENAME  $request_filename;
-        include         fastcgi_params;
-	}    
-    }
-
-    location @handmodel {
-    rewrite ^/handmodel(.*) /handmodel/index.php?$args;
-    }
-    
-    location /handmodel {
-        alias /www/toeps.nl/site/handmodel;
-        index index.php index.html index.htm;
-        try_files $uri $uri/ @handmodel;
-
-        location ~ \.php$ {
-        set $skip_cache 1;
-        if ($cache_uri != "null cache") {
-          add_header X-Cache-Debug "$cache_uri $cookie_nocache $arg_nocache$arg_comment $http_pragma $http_authorization";
-          add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-          set $skip_cache 0;
-        }
-        fastcgi_cache_bypass $skip_cache;
-        fastcgi_cache microcache;
-        fastcgi_cache_key $scheme$host$request_uri$request_method;
-        fastcgi_cache_valid any 8m;
-        fastcgi_cache_use_stale updating;
-        fastcgi_cache_bypass $http_pragma;
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass    127.0.0.1:9003;
-        fastcgi_index   index.php;
-	fastcgi_buffers 16 16k; 
-	fastcgi_buffer_size 32k;
-	fastcgi_read_timeout 300;
-        fastcgi_param   SCRIPT_FILENAME  $request_filename;
-        include         fastcgi_params;
-    	}
-    }
-
-    
 #    error_page  404              /blog/404/;
 #    error_page  500 502 503 504  /blog/50x/;
 
